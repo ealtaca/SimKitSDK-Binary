@@ -12,7 +12,7 @@ Add the following to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/ealtaca/SimKitSDK-Binary.git", from: "1.1.0")
+    .package(url: "https://github.com/ealtaca/SimKitSDK-Binary.git", from: "1.2.0")
 ]
 ```
 
@@ -20,7 +20,7 @@ Or in Xcode:
 
 1. **File > Add Package Dependencies**
 2. Enter: `https://github.com/ealtaca/SimKitSDK-Binary`
-3. Select version **1.1.0** or later
+3. Select version **1.2.0** or later
 4. Add `SimKit` to your target
 
 ## Setup
@@ -95,33 +95,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 }
 ```
 
-## Configuration
-
-Customize SDK behavior before calling `enable()`:
-
-```swift
-#if DEBUG
-let sdk = SimKitSDK.shared
-
-// WebSocket interception (default: true)
-sdk.config.webSocketInterceptionEnabled = true
-
-// Performance monitoring (default: false, controlled via macOS app)
-sdk.config.performanceMonitoringEnabled = false
-
-// Main thread block threshold (default: 200ms)
-sdk.config.mainThreadBlockThresholdMs = 200
-
-// Memory leak detection (default: true)
-sdk.config.memoryLeakDetectionEnabled = true
-
-// Launch time profiling (default: true)
-sdk.config.launchTimeProfilingEnabled = true
-
-sdk.enable()
-#endif
-```
-
 ## Features
 
 ### Network Monitoring
@@ -136,12 +109,9 @@ Define mock endpoints in the SimKit macOS app. Matching requests are intercepted
 ### WebSocket Inspection
 Monitor WebSocket connections, messages, and frames. Inject mock WebSocket messages from the macOS app for testing real-time features.
 
-### Performance Monitoring
-When enabled from the macOS app's Insights tab:
-- **Main thread block detection** — flags UI freezes above the configured threshold
-- **Memory leak detection** — identifies potential retain cycles
-- **Launch time profiling** — measures pre-main, post-main, and total launch time
-- **Memory usage tracking** — monitors real-time memory consumption
+**Supported transports:**
+- **URLSessionWebSocketTask** — automatically intercepted, no configuration needed
+- **Socket.IO (SocketIO/socket.io-client-swift)** — automatically detected and intercepted at runtime. Connection lifecycle, incoming/outgoing messages, and disconnect events are all captured. Works with both default and custom engine configurations.
 
 ## How It Works
 
@@ -167,7 +137,7 @@ Add `NSAllowsLocalNetworking` to your Info.plist (see Setup step 1).
 - Check that the SDK is enabled (`SimKitSDK.shared.enable()`)
 
 **Third-party networking libraries**
-SimKit intercepts requests at the `URLProtocol` level. Libraries that use `URLSession` (Alamofire, Moya, etc.) are automatically supported. Libraries with custom networking stacks may require additional configuration.
+SimKit intercepts HTTP requests at the `URLProtocol` level. Libraries that use `URLSession` (Alamofire, Moya, etc.) are automatically supported. For WebSockets, `URLSessionWebSocketTask` and Socket.IO (`socket.io-client-swift`) are automatically intercepted. Libraries using custom `NWConnection`-based WebSocket transports (e.g. Starscream with `useCustomEngine: true`) may not be fully captured.
 
 ## Feedback
 
