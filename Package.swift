@@ -19,8 +19,8 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "SimKit",
-            url: "https://github.com/ealtaca/SimKitSDK-Binary/releases/download/1.3.0/SimKit.xcframework.zip",
-            checksum: "c2f35ddbc873ba1b0e1e2037f113391b5fe02d1ec940e16a76048ecb72e7c44a"
+            url: "https://github.com/ealtaca/SimKitSDK-Binary/releases/download/1.3.1/SimKit.xcframework.zip",
+            checksum: "f2026d91714d0a4990652324fcdc8e195c0e80f49d44253ffe2e86336daec57a"
         )
     ]
 )

@@ -12,7 +12,7 @@ Add the following to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/ealtaca/SimKitSDK-Binary.git", from: "1.3.0")
+    .package(url: "https://github.com/ealtaca/SimKitSDK-Binary.git", from: "1.3.1")
 ]
 ```
 
@@ -20,7 +20,7 @@ Or in Xcode:
 
 1. **File > Add Package Dependencies**
 2. Enter: `https://github.com/ealtaca/SimKitSDK-Binary`
-3. Select version **1.3.0** or later
+3. Select version **1.3.1** or later
 4. Add `SimKit` to your target
 
 ## Setup
