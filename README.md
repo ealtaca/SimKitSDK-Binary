@@ -12,7 +12,7 @@ Add the following to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/ealtaca/SimKitSDK-Binary.git", from: "1.7.0")
+    .package(url: "https://github.com/ealtaca/SimKitSDK-Binary.git", from: "1.8.0")
 ]
 ```
 
@@ -20,7 +20,7 @@ Or in Xcode:
 
 1. **File > Add Package Dependencies**
 2. Enter: `https://github.com/ealtaca/SimKitSDK-Binary`
-3. Select version **1.7.0** or later
+3. Select version **1.8.0** or later
 4. Add `SimKit` to your target
 
 ## Setup
@@ -103,6 +103,8 @@ All HTTP/HTTPS requests are automatically intercepted and displayed in the SimKi
 ### Network Throttling
 Simulate real-world network conditions (3G, LTE, WiFi, offline) directly from the macOS app. Throttling is applied transparently — no code changes needed.
 
+Since 1.8.0 it reaches `WKWebView` navigations as well: Offline blocks them and latency delays their start, so a web view no longer loads at full speed while the rest of your app is throttled. Only those two apply there — WebKit owns the byte stream, so bandwidth shaping and subresource-level throttling are not possible inside a web view.
+
 ### Mock Responses
 Define mock endpoints in the SimKit macOS app. Matching requests are intercepted and return your custom responses. Match on URL, method, query, headers or body; template your responses; step through a sequence of responses to drive stateful flows; and inject faults (timeouts, connection failures, malformed payloads) to exercise your error paths. Supports large response bodies via local HTTP server.
 
@@ -113,11 +115,19 @@ Monitor WebSocket connections, messages, and frames. Inject mock WebSocket messa
 - **URLSessionWebSocketTask** — automatically intercepted, no configuration needed
 - **Socket.IO (SocketIO/socket.io-client-swift)** — automatically detected and intercepted at runtime. Connection lifecycle, incoming/outgoing messages, and disconnect events are all captured. Works with both default and custom engine configurations.
 
-### WKWebView Navigations *(new in 1.7.0)*
+### WKWebView Navigations
 `WKWebView` loads through WebKit's own networking process, which no `URLProtocol` can
-reach — so web view traffic used to be invisible. SimKit now captures navigations
-directly: main frame and iframes, link taps, JavaScript and server redirects, status
-codes, durations and failures, shown as ordinary rows in the Network tab.
+reach — so web view traffic used to be invisible. SimKit captures navigations directly:
+main frame and iframes, link taps, JavaScript and server redirects, status codes,
+durations and failures, shown as ordinary rows in the Network tab.
+
+**Cookies** *(new in 1.8.0)* — WebKit strips `Cookie` and `Set-Cookie` before a
+navigation delegate ever sees them, so a header-based cookie view has nothing to show.
+SimKit reads the web view's own cookie store as each navigation starts and reports the
+cookies that applied to it, with domain, path, expiry, `Secure`, `HttpOnly` and
+`SameSite` intact. Values are captured verbatim — session tokens included — and sent to
+the macOS app like any other request detail. Viewing them needs a matching macOS app
+version.
 
 This is a navigation-level view by design. Subresources (images, CSS, JS), `XHR`/`fetch`
 calls made from page script, and response bodies are not included.
