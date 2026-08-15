@@ -12,7 +12,7 @@ Add the following to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/ealtaca/SimKitSDK-Binary.git", from: "1.5.0")
+    .package(url: "https://github.com/ealtaca/SimKitSDK-Binary.git", from: "1.7.0")
 ]
 ```
 
@@ -20,7 +20,7 @@ Or in Xcode:
 
 1. **File > Add Package Dependencies**
 2. Enter: `https://github.com/ealtaca/SimKitSDK-Binary`
-3. Select version **1.5.0** or later
+3. Select version **1.7.0** or later
 4. Add `SimKit` to your target
 
 ## Setup
@@ -98,13 +98,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 ## Features
 
 ### Network Monitoring
-All HTTP/HTTPS requests are automatically intercepted and displayed in the SimKit macOS app in real time. Inspect request/response headers, bodies, timing, and status codes.
+All HTTP/HTTPS requests are automatically intercepted and displayed in the SimKit macOS app in real time. Inspect request/response headers, bodies, timing, and status codes — plus the phase breakdown (DNS, connect, TLS, TTFB, download), redirect chains hop by hop, TLS certificate expiry and issuer, and Server-Sent Event streams.
 
 ### Network Throttling
 Simulate real-world network conditions (3G, LTE, WiFi, offline) directly from the macOS app. Throttling is applied transparently — no code changes needed.
 
 ### Mock Responses
-Define mock endpoints in the SimKit macOS app. Matching requests are intercepted and return your custom responses. Supports large response bodies via local HTTP server.
+Define mock endpoints in the SimKit macOS app. Matching requests are intercepted and return your custom responses. Match on URL, method, query, headers or body; template your responses; step through a sequence of responses to drive stateful flows; and inject faults (timeouts, connection failures, malformed payloads) to exercise your error paths. Supports large response bodies via local HTTP server.
 
 ### WebSocket Inspection
 Monitor WebSocket connections, messages, and frames. Inject mock WebSocket messages from the macOS app for testing real-time features.
@@ -112,6 +112,15 @@ Monitor WebSocket connections, messages, and frames. Inject mock WebSocket messa
 **Supported transports:**
 - **URLSessionWebSocketTask** — automatically intercepted, no configuration needed
 - **Socket.IO (SocketIO/socket.io-client-swift)** — automatically detected and intercepted at runtime. Connection lifecycle, incoming/outgoing messages, and disconnect events are all captured. Works with both default and custom engine configurations.
+
+### WKWebView Navigations *(new in 1.7.0)*
+`WKWebView` loads through WebKit's own networking process, which no `URLProtocol` can
+reach — so web view traffic used to be invisible. SimKit now captures navigations
+directly: main frame and iframes, link taps, JavaScript and server redirects, status
+codes, durations and failures, shown as ordinary rows in the Network tab.
+
+This is a navigation-level view by design. Subresources (images, CSS, JS), `XHR`/`fetch`
+calls made from page script, and response bodies are not included.
 
 ## How It Works
 
@@ -135,6 +144,11 @@ Add `NSAllowsLocalNetworking` to your Info.plist (see Setup step 1).
 - Make sure the SimKit macOS app is running
 - Verify the simulator is detected in the SimKit floating panel
 - Check that the SDK is enabled (`SimKitSDK.shared.enable()`)
+
+**Web view traffic looks incomplete**
+`WKWebView` navigations are captured, but the resources a page loads (images, CSS, JS)
+and its `XHR`/`fetch` calls are not — WebKit routes those through its own networking
+process, out of reach of `URLProtocol`.
 
 **Third-party networking libraries**
 SimKit intercepts HTTP requests at the `URLProtocol` level. Libraries that use `URLSession` (Alamofire, Moya, etc.) are automatically supported. For WebSockets, `URLSessionWebSocketTask` and Socket.IO (`socket.io-client-swift`) are automatically intercepted. Libraries using custom `NWConnection`-based WebSocket transports (e.g. Starscream with `useCustomEngine: true`) may not be fully captured.
