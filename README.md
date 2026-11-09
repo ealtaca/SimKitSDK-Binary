@@ -4,6 +4,10 @@
 
 The companion iOS SDK for [SimKit — Simulator Toolkit](https://apps.apple.com/en/app/simkit-simulator-toolkit/id6756196371?mt=12) — a professional iOS Simulator toolkit for macOS. Add one line of code to unlock real-time network monitoring, throttling, mocking, WebSocket inspection, and performance insights directly from the SimKit macOS app.
 
+> **1.9.0 beta 1** adds real iPhones and iPads. Install it with
+> `.package(url: "https://github.com/ealtaca/SimKitSDK-Binary.git", exact: "1.9.0-beta.1")`
+> and use SimKit 1.8 beta 3 or later on the Mac. `from: "1.8.0"` stays on 1.8.0.
+
 ## Installation
 
 ### Swift Package Manager
@@ -131,6 +135,56 @@ version.
 
 This is a navigation-level view by design. Subresources (images, CSS, JS), `XHR`/`fetch`
 calls made from page script, and response bodies are not included.
+
+## Real devices
+
+*(new in 1.9.0)* On a real iPhone or iPad the SDK finds the Mac over Bonjour instead of
+`127.0.0.1`:
+
+1. Put the device on the same Wi-Fi network as the Mac.
+2. In the SimKit macOS app, turn on **Allow devices on the network**.
+3. Run your app on the device. The first time it connects, approve the device on the Mac.
+
+iOS only lets an app browse the local network when its Info.plist says why and which
+service it looks for. Add both, next to the ATS key above:
+
+```xml
+<key>NSLocalNetworkUsageDescription</key>
+<string>Connects to SimKit on your Mac for network debugging.</string>
+<key>NSBonjourServices</key>
+<array>
+    <string>_simkit._tcp</string>
+</array>
+<key>NSAppTransportSecurity</key>
+<dict>
+    <key>NSAllowsLocalNetworking</key>
+    <true/>
+</dict>
+```
+
+iOS asks the user for Local Network access on first launch; the SDK can't reach the Mac
+until it is allowed (Settings › Privacy & Security › Local Network).
+
+### Setting the Mac's address by hand
+
+When Bonjour isn't an option (a network that blocks multicast, a VPN), point the SDK at
+the Mac directly. The first one set wins:
+
+1. `SimKitConfig.host` — `SimKitSDK.shared.enable(with: SimKitConfig(host: "192.168.1.20"))`
+2. The `-SimKitHost 192.168.1.20` launch argument (Xcode › Scheme › Run › Arguments), or
+   the `SimKitHost` user default it sets
+3. The `SIMKIT_HOST` environment variable
+4. The `SimKitHost` key in Info.plist
+
+`SimKitConfig.port` changes the bridge port (default 47263). With a manual host the
+Bonjour keys above are not needed, though iOS still asks for Local Network access.
+
+### Differences from the Simulator
+
+- Response bodies up to 5 MB are shown; larger ones are listed with their size but no
+  body.
+- The macOS app quits the app and edits its user defaults through the SDK, since
+  `simctl` can't reach a device.
 
 ## How It Works
 
