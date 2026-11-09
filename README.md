@@ -4,8 +4,8 @@
 
 The companion iOS SDK for [SimKit — Simulator Toolkit](https://apps.apple.com/en/app/simkit-simulator-toolkit/id6756196371?mt=12) — a professional iOS Simulator toolkit for macOS. Add one line of code to unlock real-time network monitoring, throttling, mocking, WebSocket inspection, and performance insights directly from the SimKit macOS app.
 
-> **1.9.0 beta 1** adds real iPhones and iPads. Install it with
-> `.package(url: "https://github.com/ealtaca/SimKitSDK-Binary.git", exact: "1.9.0-beta.1")`
+> **1.9.0 beta 2** adds real iPhones and iPads. Install it with
+> `.package(url: "https://github.com/ealtaca/SimKitSDK-Binary.git", exact: "1.9.0-beta.2")`
 > and use SimKit 1.8 beta 3 or later on the Mac. `from: "1.8.0"` stays on 1.8.0.
 
 ## Installation
