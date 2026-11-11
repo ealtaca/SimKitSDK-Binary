@@ -4,9 +4,9 @@
 
 The companion iOS SDK for [SimKit — Simulator Toolkit](https://apps.apple.com/en/app/simkit-simulator-toolkit/id6756196371?mt=12) — a professional iOS Simulator toolkit for macOS. Add one line of code to unlock real-time network monitoring, throttling, mocking, WebSocket inspection, and performance insights directly from the SimKit macOS app.
 
-> **1.9.0 beta 3** adds real iPhones and iPads. Install it with
-> `.package(url: "https://github.com/ealtaca/SimKitSDK-Binary.git", exact: "1.9.0-beta.3")`
-> and use SimKit 1.8 beta 3 or later on the Mac. `from: "1.8.0"` stays on 1.8.0.
+> **1.9.0 beta 4** adds real iPhones and iPads. Install it with
+> `.package(url: "https://github.com/ealtaca/SimKitSDK-Binary.git", exact: "1.9.0-beta.4")`
+> and use SimKit 1.8 beta 8 or later on the Mac. `from: "1.8.0"` stays on 1.8.0.
 
 ## Installation
 
@@ -179,12 +179,34 @@ the Mac directly. The first one set wins:
 `SimKitConfig.port` changes the bridge port (default 47263). With a manual host the
 Bonjour keys above are not needed, though iOS still asks for Local Network access.
 
+A cable works too: with the device plugged in, the Mac is reachable over the USB link even
+where the Wi-Fi blocks Bonjour. When a browse finds nothing for 5 seconds, the SDK tries
+the last Mac address it reached, so a network that blocks only multicast still connects
+after the first time. If nothing is found, the console says so once (even with logging off).
+
 ### Differences from the Simulator
 
 - Response bodies up to 5 MB are shown; larger ones are listed with their size but no
   body.
-- The macOS app quits the app and edits its user defaults through the SDK, since
-  `simctl` can't reach a device.
+- `simctl` can't reach a device, so the macOS app does these through the SDK inside the
+  app: quit it, read and set its user defaults, take a screenshot (the app draws its own
+  windows, so the status bar and system alerts aren't in it, and it must be in front), and
+  open a link (the app's own scheme through iOS; a web link handed to the app's universal
+  link handler).
+
+## Console and notifications
+
+*(new in 1.9.0)* On a simulator or a device, the macOS app can show what the app prints and
+the notifications it receives:
+
+- **Console**, only while SimKit asks for it: stdout and stderr (`print`, `NSLog` under a
+  debugger) and, on iOS 15+, `Logger`/`os_log` entries under the app's own subsystems.
+  stdout and stderr are teed, so Xcode's console still shows everything.
+- **Notifications**: the SDK wraps the notification center delegate's `willPresent` and
+  `didReceive` and, when the app implements it,
+  `application(_:didReceiveRemoteNotification:fetchCompletionHandler:)`, always calling
+  through to the app's code. An app with no notification center delegate gets a stand-in
+  that answers as iOS does without one (no banner in the foreground).
 
 ## How It Works
 
