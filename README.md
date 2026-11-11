@@ -4,9 +4,9 @@
 
 The companion iOS SDK for [SimKit — Simulator Toolkit](https://apps.apple.com/en/app/simkit-simulator-toolkit/id6756196371?mt=12) — a professional iOS Simulator toolkit for macOS. Add one line of code to unlock real-time network monitoring, throttling, mocking, WebSocket inspection, and performance insights directly from the SimKit macOS app.
 
-> **1.9.0 beta 5** adds real iPhones and iPads, paired with one Mac by a 6-digit code. Install it with
-> `.package(url: "https://github.com/ealtaca/SimKitSDK-Binary.git", exact: "1.9.0-beta.5")`
-> and use SimKit 1.8 beta 9 or later on the Mac. `from: "1.8.0"` stays on 1.8.0.
+> **1.9.0 beta 6** adds real iPhones and iPads, paired with one Mac by a 6-digit code, and the app's own data. Install it with
+> `.package(url: "https://github.com/ealtaca/SimKitSDK-Binary.git", exact: "1.9.0-beta.6")`
+> and use SimKit 1.8 beta 10 or later on the Mac. `from: "1.8.0"` stays on 1.8.0.
 
 ## Installation
 
@@ -228,6 +228,26 @@ the notifications it receives:
   `application(_:didReceiveRemoteNotification:fetchCompletionHandler:)`, always calling
   through to the app's code. An app with no notification center delegate gets a stand-in
   that answers as iOS does without one (no banner in the foreground).
+
+## App data
+
+*(new in 1.9.0)* On a simulator or a device, the macOS app (Debug tab, or its MCP tools)
+can reach what the app itself can, through the SDK:
+
+- **Files** in the app's container or an app group's: list, read (up to 5 MB), write and
+  delete. Paths can't leave the container.
+- **Keychain**: the app's generic and internet password items, with their values, and
+  deleting them (one, or all as on a fresh install).
+- **SQLite**: databases in the container (Core Data and SwiftData stores included), their
+  tables, and a query. Read-only unless SimKit asks to write.
+- **Cookies** in `HTTPCookieStorage.shared` and WKWebView's default store; deleting them.
+- **Language**: the app's own `AppleLanguages` and `AppleLocale`, used the next time it
+  starts.
+
+On a device connected to Xcode (by cable, or paired for Wi-Fi), the macOS app also drives
+the device itself through Xcode's `devicectl`, without the SDK: the whole screen with the
+status bar, recording, a fake status bar, location, Face ID, appearance and text size,
+orientation, the clipboard, relaunching the app and memory warnings.
 
 ## How It Works
 
