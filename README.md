@@ -4,9 +4,9 @@
 
 The companion iOS SDK for [SimKit — Simulator Toolkit](https://apps.apple.com/en/app/simkit-simulator-toolkit/id6756196371?mt=12) — a professional iOS Simulator toolkit for macOS. Add one line of code to unlock real-time network monitoring, throttling, mocking, WebSocket inspection, and performance insights directly from the SimKit macOS app.
 
-> **1.9.0 beta 4** adds real iPhones and iPads. Install it with
-> `.package(url: "https://github.com/ealtaca/SimKitSDK-Binary.git", exact: "1.9.0-beta.4")`
-> and use SimKit 1.8 beta 8 or later on the Mac. `from: "1.8.0"` stays on 1.8.0.
+> **1.9.0 beta 5** adds real iPhones and iPads, paired with one Mac by a 6-digit code. Install it with
+> `.package(url: "https://github.com/ealtaca/SimKitSDK-Binary.git", exact: "1.9.0-beta.5")`
+> and use SimKit 1.8 beta 9 or later on the Mac. `from: "1.8.0"` stays on 1.8.0.
 
 ## Installation
 
@@ -143,7 +143,28 @@ calls made from page script, and response bodies are not included.
 
 1. Put the device on the same Wi-Fi network as the Mac.
 2. In the SimKit macOS app, turn on **Allow devices on the network**.
-3. Run your app on the device. The first time it connects, approve the device on the Mac.
+3. Run your app on the device. It shows up in SimKit under Settings › Network › Devices.
+   Click **Pair…**; the app shows a 6-digit code at the top of the screen and in the Xcode
+   console. Type it on the Mac.
+
+### Pairing
+
+Until it is paired, a device sends SimKit nothing but its name: no traffic, and it takes
+no commands or mocks. Pairing ties it to one Mac:
+
+- The code never crosses the network. Both ends derive it from an X25519 key exchange
+  with the Mac committed to its part first (the way Bluetooth LE pairs), so someone
+  between them ends up with a different code and gets one guess in a million.
+- The device and the Mac keep a key in their keychains. Every connection proves it both
+  ways and is encrypted with AES-GCM; the device talks to no other Mac.
+- A paired device no longer shows up on other Macs. To move it, unpair it on its Mac
+  (Settings › Network › Devices › **Unpair…**). If that Mac is gone, launch the app with
+  `-SimKitUnpair YES` or call `SimKitSDK.shared.unpair()`.
+- Pairing is per device when your apps share a keychain group: turn on Keychain Sharing
+  with a shared group listed first, or set `SimKitConfig(keychainGroup:)`. Without one,
+  each app pairs on its own.
+
+The Simulator connects over loopback as before and doesn't pair.
 
 iOS only lets an app browse the local network when its Info.plist says why and which
 service it looks for. Add both, next to the ATS key above:
