@@ -4,9 +4,9 @@
 
 The companion iOS SDK for [SimKit — Simulator Toolkit](https://apps.apple.com/en/app/simkit-simulator-toolkit/id6756196371?mt=12) — a professional iOS Simulator toolkit for macOS. Add one line of code to unlock real-time network monitoring, throttling, mocking, WebSocket inspection, and performance insights directly from the SimKit macOS app.
 
-> **1.9.0 beta 6** adds real iPhones and iPads, paired with one Mac by a 6-digit code, and the app's own data. Install it with
-> `.package(url: "https://github.com/ealtaca/SimKitSDK-Binary.git", exact: "1.9.0-beta.6")`
-> and use SimKit 1.8 beta 10 or later on the Mac. `from: "1.8.0"` stays on 1.8.0.
+> **1.9.0 beta 7** adds performance sampling, request origin, repro steps, received links and an accessibility audit, on top of real devices and app data. Install it with
+> `.package(url: "https://github.com/ealtaca/SimKitSDK-Binary.git", exact: "1.9.0-beta.7")`
+> and use SimKit 1.8 beta 11 or later on the Mac. `from: "1.8.0"` stays on 1.8.0.
 
 ## Installation
 
@@ -248,6 +248,22 @@ On a device connected to Xcode (by cable, or paired for Wi-Fi), the macOS app al
 the device itself through Xcode's `devicectl`, without the SDK: the whole screen with the
 status bar, recording, a fake status bar, location, Face ID, appearance and text size,
 orientation, the clipboard, relaunching the app and memory warnings.
+
+## Performance, origin and steps
+
+*(new in 1.9.0)* On a simulator or a device, the macOS app can ask the SDK for more about
+what the app is doing:
+
+- **Performance**: frame rate, memory, CPU and main-thread hangs, once a second, with the
+  code the main thread was in during a hang. Sampled only while SimKit's Performance tab
+  asks for it; nothing runs otherwise.
+- **Request origin**: where in the app each request was started. Debug builds only, and
+  SimKit can turn it off.
+- **Steps**: the taps and swipes made in the app, as a list to reproduce a bug. Recorded
+  only while SimKit asks.
+- **Received links**: the URLs and universal links the app is opened with.
+- **Accessibility audit**: SimKit asks what is on screen and scores it.
+- **Slow DNS**: holds back the first request to each host.
 
 ## How It Works
 
