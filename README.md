@@ -4,9 +4,7 @@
 
 The companion iOS SDK for [SimKit — Simulator Toolkit](https://apps.apple.com/en/app/simkit-simulator-toolkit/id6756196371?mt=12) — a professional iOS Simulator toolkit for macOS. Add one line of code to unlock real-time network monitoring, throttling, mocking, WebSocket inspection, and performance insights directly from the SimKit macOS app.
 
-> **1.9.0 beta 8** fixes a crash when a web view is loaded with a nil or empty URL (in every release since 1.8.0), and adds performance sampling, request origin, repro steps, received links and an accessibility audit, on top of real devices and app data. Install it with
-> `.package(url: "https://github.com/ealtaca/SimKitSDK-Binary.git", exact: "1.9.0-beta.8")`
-> and use SimKit 1.8 beta 11 or later on the Mac. `from: "1.8.0"` stays on 1.8.0.
+> **1.9.0** brings real iPhones and iPads, the app's files, keychain, databases and cookies, performance sampling, request origin, repro steps, received links and an accessibility audit. It also fixes a crash when a web view is loaded with a nil or empty URL (in every release since 1.8.0). Use it with SimKit 1.8 or later on the Mac.
 
 ## Installation
 
@@ -16,7 +14,7 @@ Add the following to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/ealtaca/SimKitSDK-Binary.git", from: "1.8.0")
+    .package(url: "https://github.com/ealtaca/SimKitSDK-Binary.git", from: "1.9.0")
 ]
 ```
 
